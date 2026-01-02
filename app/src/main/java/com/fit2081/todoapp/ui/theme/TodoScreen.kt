@@ -17,11 +17,11 @@ import com.fit2081.todoapp.ui.theme.viewModel.TodoViewModel
 @Composable
 fun TodoScreen(viewModel: TodoViewModel) {
 
-    // ===== ViewModel 状态 =====
+
     val todos by viewModel.todos.collectAsState()
     val query by viewModel.query.collectAsState()
 
-    // ===== 本地 UI 状态 =====
+
     val categories = listOf("Work", "Study", "Life")
     var selectedCategory by remember { mutableStateOf(categories[0]) }
     var expanded by remember { mutableStateOf(false) }
@@ -35,7 +35,7 @@ fun TodoScreen(viewModel: TodoViewModel) {
             .padding(16.dp)
     ) {
 
-        // ===== 搜索框（进阶功能）=====
+
         TextField(
             value = query,
             onValueChange = { viewModel.updateQuery(it) },
@@ -45,7 +45,6 @@ fun TodoScreen(viewModel: TodoViewModel) {
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // ===== Title 输入（必填）=====
         TextField(
             value = title,
             onValueChange = { title = it },
@@ -55,7 +54,7 @@ fun TodoScreen(viewModel: TodoViewModel) {
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // ===== Description 输入（可选）=====
+
         TextField(
             value = description,
             onValueChange = { description = it },
@@ -65,7 +64,7 @@ fun TodoScreen(viewModel: TodoViewModel) {
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // ===== 分类选择 + Add =====
+
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -112,7 +111,7 @@ fun TodoScreen(viewModel: TodoViewModel) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // ===== Todo 列表 =====
+
         LazyColumn(
             modifier = Modifier.fillMaxSize()
         ) {
@@ -148,7 +147,6 @@ fun TodoScreen(viewModel: TodoViewModel) {
                             }
                         )
 
-                        // 👇 只有 description 不为空才显示
                         todo.description?.let {
                             Text(
                                 text = it,
