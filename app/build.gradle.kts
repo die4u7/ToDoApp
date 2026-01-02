@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.fit2081.todoapp"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.fit2081.todoapp"
