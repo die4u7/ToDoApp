@@ -42,16 +42,33 @@ fun TodoScreen(viewModel: TodoViewModel) {
 
         LazyColumn {
             items(todos) { todo ->
-                Text(
-                    text = if (todo.isCompleted) "✔ ${todo.title}" else todo.title,
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable {
-                            viewModel.toggleTodo(todo.id)
-                        }
-                        .padding(8.dp)
-                )
+                        .padding(8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+
+                    Text(
+                        text = if (todo.isCompleted) "✔ ${todo.title}" else todo.title,
+                        modifier = Modifier
+                            .weight(1f)
+                            .clickable {
+                                viewModel.toggleTodo(todo.id)
+                            }
+                    )
+
+                    Text(
+                        text = "❌",
+                        modifier = Modifier
+                            .padding(start = 8.dp)
+                            .clickable {
+                                viewModel.deleteTodo(todo.id)
+                            }
+                    )
+                }
             }
         }
+
     }
 }
