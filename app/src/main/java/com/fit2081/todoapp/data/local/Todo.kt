@@ -9,4 +9,5 @@ data class Todo (
     val id : Int = 0,
     val title : String,
     val isCompleted : Boolean = false,
+    val category:String
 )

@@ -7,15 +7,15 @@ import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
 @Dao
 interface TodoDao {
-    @Query("SELECT * FROM Todo")
-    fun getTodos():Flow<List<Todo>>
+    @Query("SELECT * FROM todo")
+    fun getTodos(): Flow<List<Todo>>
 
     @Insert
     suspend fun insertTodo(todo: Todo)
 
-    @Query("DELETE FROM Todo WHERE id = :id")
+    @Query("DELETE FROM todo WHERE id = :id")
     suspend fun deleteTodo(id: Int)
 
-    @Query("UPDATE Todo SET isCompleted = NOT isCompleted WHERE id = :id")
+    @Query("UPDATE todo SET isCompleted = NOT isCompleted WHERE id = :id")
     suspend fun updateTodo(id: Int): Int
 }
