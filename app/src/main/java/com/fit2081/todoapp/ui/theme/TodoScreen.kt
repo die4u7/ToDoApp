@@ -1,5 +1,6 @@
 package com.fit2081.todoapp.ui.theme
 
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -16,12 +17,17 @@ import com.fit2081.todoapp.ui.theme.viewModel.TodoViewModel
 @Composable
 fun TodoScreen(viewModel: TodoViewModel) {
 
+    // ===== ViewModel 状态 =====
     val todos by viewModel.todos.collectAsState()
     val query by viewModel.query.collectAsState()
+
+    // ===== 本地 UI 状态 =====
     val categories = listOf("Work", "Study", "Life")
     var selectedCategory by remember { mutableStateOf(categories[0]) }
     var expanded by remember { mutableStateOf(false) }
-    var input by remember { mutableStateOf("") }
+
+    var title by remember { mutableStateOf("") }
+    var description by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -29,30 +35,40 @@ fun TodoScreen(viewModel: TodoViewModel) {
             .padding(16.dp)
     ) {
 
+        // ===== 搜索框（进阶功能）=====
         TextField(
             value = query,
             onValueChange = { viewModel.updateQuery(it) },
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text("Search todos") },
-            singleLine = true
+            placeholder = { Text("Search todos") }
         )
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        Row(
+        // ===== Title 输入（必填）=====
+        TextField(
+            value = title,
+            onValueChange = { title = it },
             modifier = Modifier.fillMaxWidth(),
+            placeholder = { Text("Title (required)") }
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // ===== Description 输入（可选）=====
+        TextField(
+            value = description,
+            onValueChange = { description = it },
+            modifier = Modifier.fillMaxWidth(),
+            placeholder = { Text("Description (optional)") }
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // ===== 分类选择 + Add =====
+        Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-
-            TextField(
-                value = input,
-                onValueChange = { input = it },
-                modifier = Modifier.weight(1f),
-                placeholder = { Text("New todo") },
-                singleLine = true
-            )
-
-            Spacer(modifier = Modifier.width(8.dp))
 
             Box {
                 Button(onClick = { expanded = true }) {
@@ -79,9 +95,14 @@ fun TodoScreen(viewModel: TodoViewModel) {
 
             Button(
                 onClick = {
-                    if (input.isNotBlank()) {
-                        viewModel.addTodo(input, selectedCategory)
-                        input = ""
+                    if (title.isNotBlank()) {
+                        viewModel.addTodo(
+                            title = title,
+                            description = description.takeIf { it.isNotBlank() },
+                            category = selectedCategory
+                        )
+                        title = ""
+                        description = ""
                     }
                 }
             ) {
@@ -91,60 +112,65 @@ fun TodoScreen(viewModel: TodoViewModel) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        if (todos.isEmpty()) {
-            Text(
-                text = "No todos found",
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(16.dp)
-            )
-        } else {
-            LazyColumn {
-                items(todos) { todo ->
-                    Row(
+        // ===== Todo 列表 =====
+        LazyColumn(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            items(todos) { todo ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+
+                    Checkbox(
+                        checked = todo.isCompleted,
+                        onCheckedChange = {
+                            viewModel.toggleTodo(todo.id)
+                        }
+                    )
+
+                    Column(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                            .weight(1f)
+                            .padding(horizontal = 8.dp)
                     ) {
 
-                        Checkbox(
-                            checked = todo.isCompleted,
-                            onCheckedChange = {
-                                viewModel.toggleTodo(todo.id)
+                        Text(
+                            text = todo.title,
+                            style = if (todo.isCompleted) {
+                                LocalTextStyle.current.copy(
+                                    textDecoration = TextDecoration.LineThrough
+                                )
+                            } else {
+                                LocalTextStyle.current
                             }
                         )
 
-                        Column(
-                            modifier = Modifier.weight(1f)
-                        ) {
+                        // 👇 只有 description 不为空才显示
+                        todo.description?.let {
                             Text(
-                                text = todo.title,
-                                style = if (todo.isCompleted) {
-                                    LocalTextStyle.current.copy(
-                                        textDecoration = TextDecoration.LineThrough
-                                    )
-                                } else {
-                                    LocalTextStyle.current
-                                }
-                            )
-
-                            Text(
-                                text = todo.category,
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.primary
+                                text = it,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
 
-                        IconButton(
-                            onClick = {
-                                viewModel.deleteTodo(todo.id)
-                            }
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Delete,
-                                contentDescription = "Delete todo"
-                            )
-                        }
+                        Text(
+                            text = todo.category,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+
+                    IconButton(
+                        onClick = { viewModel.deleteTodo(todo.id) }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = "Delete todo"
+                        )
                     }
                 }
             }

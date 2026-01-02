@@ -41,11 +41,12 @@ class TodoViewModel(
         emptyList()
     )
 
-    fun addTodo(title: String, category: String) {
+    fun addTodo(title: String, description : String?,category: String) {
         viewModelScope.launch {
             repository.add(
                 Todo(
                     title = title,
+                    description = description,
                     category = category,
                     isCompleted = false
                 )
