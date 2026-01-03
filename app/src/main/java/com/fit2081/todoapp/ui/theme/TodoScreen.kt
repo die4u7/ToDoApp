@@ -1,6 +1,5 @@
 package com.fit2081.todoapp.ui.theme
 
-
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -16,45 +15,32 @@ import com.fit2081.todoapp.ui.theme.viewModel.TodoViewModel
 
 @Composable
 fun TodoScreen(viewModel: TodoViewModel) {
-
-
     val todos by viewModel.todos.collectAsState()
     val query by viewModel.query.collectAsState()
-
-
     val categories = listOf("Work", "Study", "Life")
     var selectedCategory by remember { mutableStateOf(categories[0]) }
     var expanded by remember { mutableStateOf(false) }
-
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
-
-
         TextField(
             value = query,
             onValueChange = { viewModel.updateQuery(it) },
             modifier = Modifier.fillMaxWidth(),
             placeholder = { Text("Search todos") }
         )
-
         Spacer(modifier = Modifier.height(12.dp))
-
         TextField(
             value = title,
             onValueChange = { title = it },
             modifier = Modifier.fillMaxWidth(),
             placeholder = { Text("Title (required)") }
         )
-
         Spacer(modifier = Modifier.height(8.dp))
-
-
         TextField(
             value = description,
             onValueChange = { description = it },
